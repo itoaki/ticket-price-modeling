@@ -1,4 +1,3 @@
-```plantuml
 @startuml
 left to right direction
 ' title
@@ -22,7 +21,7 @@ rectangle チケット料金 {
  (映画を指定する) as (movie)
  (日付を指定する) as (date)
  (時間を指定する) as (time)
- (枚数を指定する) as (count)
+ (座席を指定する) as (sheet)
  (属性を指定する) as (attribute)
  (割引を適用する) as (discount)
 }
@@ -30,7 +29,7 @@ rectangle チケット料金 {
 (calc) .-> (movie)
 (calc) .-> (date)
 (calc) .-> (time)
-(calc) .-> (count)
+(calc) .-> (sheet)
 (calc) .-> (attribute)
 (calc) .-> (discount)
 
@@ -39,4 +38,3 @@ Customer --> (reserve)
 Receptionist -->(calc)
 Receptionist --> (accounting)
 @enduml
-'''

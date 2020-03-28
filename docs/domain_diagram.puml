@@ -1,0 +1,106 @@
+@startuml
+
+rectangle 映画 {
+ object "映画" as movie {
+    映画ID
+    タイトル
+    ギミック
+ }
+ object "映画ギミック" as gimmick {
+    ギミック
+ }
+
+ movie "1" -- "1" gimmick
+}
+note bottom of gimmick : ギミックなし or 3D作品(enumにしよう)
+
+rectangle 上映スケジュール {
+ object "上映スケジュール" as schedule {
+    上映ID
+    映画
+    上映日
+    上映開始時間
+    スクリーン
+    特別上映
+ }
+ object "特別上映" as special {
+    特別上映
+ }
+ schedule "1" -- "1" special
+}
+note top of schedule : ・毎月1日は映画の日\n・映画の日は、エムアイカードと\n　駐車場パーク80割引は適用外\n・20時以降の上映はレイトショー
+note bottom of special : 特別興行、爆音上映(enumにしよう)
+
+rectangle スクリーン as screenRepo {
+ object "スクリーン" as screen {
+    スクリーンID
+    スクリーン名
+    座席
+ }
+ object "座席" as sheet {
+    座席ID
+    座席名
+ }
+ screen "1" -- "many" sheet
+}
+note bottom of screenRepo : 今回は実装の対象外
+
+rectangle チケット料金 {
+ object "チケット料金" as ticketPrice {
+    チケット料金ID
+    チケット
+ }
+ object "チケット" as ticket {
+    チケットID
+    上映
+    座席
+    適用条件
+    料金
+ }
+ object "適用料金" as price {
+    設定料金ID
+    設定料金名
+    料金
+ }
+
+ ticketPrice "many" -- "1" ticket
+ ticket "1" -- "1" price
+}
+
+rectangle 顧客 {
+ object "顧客" as customer {
+    ID(IDって別になんか登録するわけではないよな。。。)
+    生年月日
+    証明書
+    会員証
+ }
+ object "証明書" as certificate {
+    証明書
+ }
+ object "会員証" as member {
+    会員ID
+ }
+ object "3Dメガネ" as 3dglass {
+    会員ID
+ }
+ customer "1" -- "1" certificate
+ customer "1" -- "1" member
+ customer "1" -- "1" 3dglass
+}
+note bottom of certificate : 身分証、学生証
+
+
+rectangle 全ての料金計算を司る何か {
+ object "全ての料金計算を司る何か" as something {
+  顧客
+  上映スケジュール
+ }
+}
+
+schedule "many" -left- "1" movie
+schedule "1" -left- "1" ticket
+schedule "1" -- "1" screen
+
+something "1" -- "1" schedule
+something "1" -- "1" customer
+@enduml
