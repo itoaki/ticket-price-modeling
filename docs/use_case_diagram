@@ -1,0 +1,42 @@
+```plantuml
+@startuml
+left to right direction
+' title
+title チケット料金モデリングユースケース図
+
+' actors
+:顧客: as Customer
+:顧客: as Customer2
+:受付\nor 発券機: as Receptionist
+ note "直接来館している顧客は、\n受付または、発券機を経由する" as Customer2Note
+ (Customer2) .. Customer2Note
+ Customer2Note .. (Receptionist)
+
+rectangle ユーザーアクション {
+ (チケットの料金を確認する) as (calc)
+ (予約をする) as (reserve)
+ (会計をする) as (accounting)
+}
+
+rectangle チケット料金 {
+ (映画を指定する) as (movie)
+ (日付を指定する) as (date)
+ (時間を指定する) as (time)
+ (枚数を指定する) as (count)
+ (属性を指定する) as (attribute)
+ (割引を適用する) as (discount)
+}
+
+(calc) .-> (movie)
+(calc) .-> (date)
+(calc) .-> (time)
+(calc) .-> (count)
+(calc) .-> (attribute)
+(calc) .-> (discount)
+
+Customer --> (calc)
+Customer --> (reserve)
+Receptionist -->(calc)
+Receptionist --> (accounting)
+@enduml
+'''
