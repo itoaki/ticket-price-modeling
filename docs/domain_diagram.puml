@@ -4,15 +4,26 @@ rectangle 映画 {
  object "映画" as movie {
     映画ID
     タイトル
-    ギミック
  }
  object "映画ギミック" as gimmick {
-    ギミック
+    ギミックなし/3D作品
  }
 
- movie "1" -- "1" gimmick
+ gimmick "1" - "1" movie
 }
-note bottom of gimmick : ギミックなし or 3D作品(enumにしよう)
+
+rectangle スクリーン as screenRepo {
+ object "スクリーン" as screen {
+    スクリーンID
+    スクリーン名
+ }
+ object "座席" as sheet {
+    座席ID
+    座席名
+ }
+ sheet "many" - "1" screen
+}
+note bottom of screenRepo : 今回は実装の対象外
 
 rectangle 上映スケジュール {
  object "上映スケジュール" as schedule {
@@ -20,87 +31,65 @@ rectangle 上映スケジュール {
     映画
     上映日
     上映開始時間
-    スクリーン
-    特別上映
  }
  object "特別上映" as special {
-    特別上映
+    特別興行/爆音上映
  }
- schedule "1" -- "1" special
+ schedule "1" - "1" special
 }
 note top of schedule : ・毎月1日は映画の日\n・映画の日は、エムアイカードと\n　駐車場パーク80割引は適用外\n・20時以降の上映はレイトショー
-note bottom of special : 特別興行、爆音上映(enumにしよう)
 
-rectangle スクリーン as screenRepo {
- object "スクリーン" as screen {
-    スクリーンID
-    スクリーン名
-    座席
- }
- object "座席" as sheet {
-    座席ID
-    座席名
- }
- screen "1" -- "many" sheet
-}
-note bottom of screenRepo : 今回は実装の対象外
 
 rectangle チケット料金 {
  object "チケット料金" as ticketPrice {
-    チケット料金ID
-    チケット
+    合計金額
  }
  object "チケット" as ticket {
     チケットID
-    上映
-    座席
-    適用条件
     料金
+    枚数
  }
- object "適用料金" as price {
-    設定料金ID
-    設定料金名
-    料金
- }
-
- ticketPrice "many" -- "1" ticket
- ticket "1" -- "1" price
+ticket "1" - "many" ticketPrice
 }
 
 rectangle 顧客 {
  object "顧客" as customer {
-    ID(IDって別になんか登録するわけではないよな。。。)
     生年月日
     証明書
     会員証
  }
  object "証明書" as certificate {
-    証明書
+    身分証/学生証/生徒手帳/障害者手帳
  }
  object "会員証" as member {
     会員ID
  }
  object "3Dメガネ" as 3dglass {
-    会員ID
+    あり/なし
  }
- customer "1" -- "1" certificate
- customer "1" -- "1" member
- customer "1" -- "1" 3dglass
+ certificate "1" -- "1" customer
+ member "1" -- "1" customer
+ 3dglass "1" -- "1" customer
 }
-note bottom of certificate : 身分証、学生証
+note bottom of customer : 中・高校生は生徒手帳\n学生（大・専）は学生証\nシニア（70才以上）は身分証\n障がい者（学生以上）は障害者手帳\n障がい者（高校以下）は、障害者手帳と生徒手帳\nで身分を確認し、料金を適用する
 
-
-rectangle 全ての料金計算を司る何か {
- object "全ての料金計算を司る何か" as something {
-  顧客
-  上映スケジュール
+rectangle 料金表 {
+ object "料金表" as priceList {
+  料金ID
+  料金名
+  料金
  }
 }
 
-schedule "many" -left- "1" movie
-schedule "1" -left- "1" ticket
-schedule "1" -- "1" screen
+movie -[hidden]- screen
+priceList -[hidden]- ticket
 
-something "1" -- "1" schedule
-something "1" -- "1" customer
+movie "1" - "many" schedule
+screen "1" - "1" schedule
+
+schedule "1" - "1" ticket
+schedule "1" -- "1" priceList
+customer "1" - "1" priceList
+priceList "1" -- "1" ticket
+sheet "1" - "1" ticket
 @enduml
